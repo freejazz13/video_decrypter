@@ -160,7 +160,7 @@ bool MyAdaptiveStream::download(const char* url, const std::map<std::string, std
 
 bool adaptive::AdaptiveTree::download(const char* url, const std::map<std::string, std::string> &manifestHeaders, void *opaque)
 {
-    file_mpd = std::ifstream(info_path+"\\manifest.mpd");
+    file_mpd = std::ifstream(info_path+"/manifest.mpd");
     std::stringstream buffer;
     buffer << file_mpd.rdbuf();
     file_mpd.close();
@@ -173,6 +173,9 @@ int main(int argc, char *argv[])
 {
     if(argc != 5)
     {
+	// info path= rep du mpd et license_url
+	// stream_id= ???
+	//decrypted_path= rep des f. dec.
         printf("Syntax : %s {encrypted_file} {stream_id} {info_path} {decrypted_path}\n", argv[0]);
         return -1;
     }
@@ -182,8 +185,8 @@ int main(int argc, char *argv[])
     info_path = argv[3];
     decrypted_path = argv[4];
 
-    std::string nom_fragment = encrypted_file.substr(encrypted_file.find_last_of("/\\")+1);
-    std::string type_fragment = nom_fragment.substr(nom_fragment.find("_")+1);
+    std::string nom_fragment = encrypted_file.substr(encrypted_file.find_last_of("/")+1);
+    std::string type_fragment = nom_fragment.substr(nom_fragment.find("_")+1); // UNUSED
 
     int stream_id;
     try
@@ -202,17 +205,17 @@ int main(int argc, char *argv[])
     printf("Decrypted path : %s\n", decrypted_path.c_str());
 
     file_fragment = std::ifstream(encrypted_file, std::ios::binary);
-    file_decrypted_data = std::ofstream(decrypted_path+"\\"+nom_video+"_track_"+stream_id_str, std::ios::binary | std::ios::trunc);
+    file_decrypted_data = std::ofstream(decrypted_path+"/"+nom_video+"_track_"+stream_id_str, std::ios::binary | std::ios::trunc);
 
     MyHost host;
-    profile_path = info_path+"\\"+std::to_string(std::time(0))+"\\";
+    profile_path = info_path+"/"+std::to_string(std::time(0))+"/";
     host.Create_Directory(profile_path.c_str());
 
     // --------------------------------------------------------------------------------------------------------------
     // --------------------------------------------------------------------------------------------------------------
     printf("Initialisation...\n");
 
-    std::ifstream file_lic(info_path+"\\license_key.txt");
+    std::ifstream file_lic(info_path+"/license_url");
     std::stringstream buffer;
     buffer << file_lic.rdbuf();
     file_lic.close();
@@ -228,9 +231,9 @@ int main(int argc, char *argv[])
     SSD::SSD_DECRYPTER *decrypter_;
 
 #ifdef NDEBUG
-    std::string lib_wvdecrypter_path = std::string(dirname(strdup(argv[0]))) + "/wvdecrypter/libssd_wv.dll";
+    std::string lib_wvdecrypter_path = std::string(dirname(strdup(argv[0]))) + "/libssd_wv.so";
 #else
-    std::string lib_wvdecrypter_path = std::string(dirname(strdup(argv[0]))) + "/wvdecrypter/libssd_wvd.dll";
+    std::string lib_wvdecrypter_path = std::string(dirname(strdup(argv[0]))) + "/libssd_wvd.so";
 #endif // NDEBUG
 
     void * mod(dlopen(lib_wvdecrypter_path.c_str(), RTLD_LAZY));

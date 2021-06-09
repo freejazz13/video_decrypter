@@ -44,7 +44,8 @@ include_directories(
 )
 
 if(NOT WIN32)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -g3")
+set(CMAKE_CXX_FLAGS "-std=gnu++11 -g3")
 endif()
 
 add_executable(widevine_decrypter ${HEADERS} ${SOURCES})
